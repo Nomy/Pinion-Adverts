@@ -263,11 +263,11 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 public OnPluginStart()
 {
 	// Catch the MOTD
-	new UserMsg:VGUIMenu = GetUserMessageId("VGUIMenu");
-	if (VGUIMenu == INVALID_MESSAGE_ID)
-		SetFailState("Failed to find VGUIMenu usermessage");
+	//new UserMsg:VGUIMenu = GetUserMessageId("VGUIMenu");
+	//if (VGUIMenu == INVALID_MESSAGE_ID)
+	//	SetFailState("Failed to find VGUIMenu usermessage");
 	
-	HookUserMessage(VGUIMenu, OnMsgVGUIMenu, true);
+	//HookUserMessage(VGUIMenu, OnMsgVGUIMenu, true);
 
 	// Hook the MOTD OK button
 	AddCommandListener(PageClosed, "closed_htmlpage");
@@ -409,6 +409,11 @@ RefreshCvarCache()
 
 SetupReView()
 {
+	// CSS does NOT support hooking of the OK button
+	if (g_Game == kGameCSS)
+	{
+		HookEvent("player_team", Event_PlayerTeam);
+	}
 	// only support on TF2 while testing
 	if (g_Game == kGameTF2)
 	{
@@ -430,6 +435,17 @@ public OnClientConnected(client)
 	g_bPlayerActivated[client] = false;
 }
 
+// Player Chose Team - Cause page hit
+public Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
+{
+	if (GetEventInt(event, "team") >= 1)
+	{
+		new client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+		ChangeState(client, kAdDone);
+		CreateTimer(0.1, Event_DoPageHit, GetClientSerial(client));
+	}
+}
 
 public Action:Event_DoPageHit(Handle:timer, any:serial)
 {
