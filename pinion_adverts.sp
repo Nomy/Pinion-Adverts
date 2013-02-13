@@ -263,11 +263,11 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 public OnPluginStart()
 {
 	// Catch the MOTD
-	//new UserMsg:VGUIMenu = GetUserMessageId("VGUIMenu");
-	//if (VGUIMenu == INVALID_MESSAGE_ID)
-	//	SetFailState("Failed to find VGUIMenu usermessage");
+	new UserMsg:VGUIMenu = GetUserMessageId("VGUIMenu");
+	if (VGUIMenu == INVALID_MESSAGE_ID)
+		SetFailState("Failed to find VGUIMenu usermessage");
 	
-	//HookUserMessage(VGUIMenu, OnMsgVGUIMenu, true);
+	HookUserMessage(VGUIMenu, OnMsgVGUIMenu, true);
 
 	// Hook the MOTD OK button
 	AddCommandListener(PageClosed, "closed_htmlpage");
