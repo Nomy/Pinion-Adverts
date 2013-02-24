@@ -438,13 +438,43 @@ public OnClientConnected(client)
 // Player Chose Team - Cause page hit
 public Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 {
+	new client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (GetEventInt(event, "team") >= 1)
 	{
-		new client = GetClientOfUserId(GetEventInt(event, "userid"));
 
-		ChangeState(client, kAdDone);
-		CreateTimer(0.1, Event_DoPageHit, GetClientSerial(client));
+		if (client == 0 || !IsClientInGame(client))
+			return;
+	
+		switch (GetState(client))
+		{
+			case kAdDone:
+			{
+				return;
+			}
+			case kViewingAd:
+			{
+				new Handle:pack = CreateDataPack();
+				WritePackCell(pack, GetClientSerial(client));
+				WritePackCell(pack, AD_TRIGGER_UNDEFINED);
+				LoadPage(INVALID_HANDLE, pack);
+			}
+			case kAdClosing:
+			{
+				ChangeState(client, kAdDone);
+				CreateTimer(0.1, Event_DoPageHit, GetClientSerial(client));
+				
+				// Do the actual intended motd 'cmd' now that we're done capturing close.
+				switch (g_Game)
+				{
+					case kGameCSS, kGameND:
+						FakeClientCommand(client, "joingame");
+					case kGameDODS:
+						ClientCommand(client, "changeteam");
+				}
+			}
+		}
 	}
+	return;
 }
 
 public Action:Event_DoPageHit(Handle:timer, any:serial)
