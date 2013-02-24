@@ -462,14 +462,6 @@ public Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 			{
 				ChangeState(client, kAdDone);
 				CreateTimer(0.1, Event_DoPageHit, GetClientSerial(client));
-				
-				// Do the actual intended motd 'cmd' now that we're done capturing close.
-				switch (g_Game)
-				{
-					case kGameCSS, kGameND:
-						FakeClientCommand(client, "joingame");
-					case kGameDODS:
-						ClientCommand(client, "changeteam");
 				}
 			}
 		}
