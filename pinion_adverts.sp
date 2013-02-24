@@ -462,12 +462,11 @@ public Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 			{
 				ChangeState(client, kAdDone);
 				CreateTimer(0.1, Event_DoPageHit, GetClientSerial(client));
-				}
 			}
 		}
 	}
-	return;
 }
+
 
 public Action:Event_DoPageHit(Handle:timer, any:serial)
 {
